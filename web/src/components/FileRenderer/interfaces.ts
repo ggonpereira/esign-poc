@@ -1,11 +1,12 @@
+import { Field, Recipient } from "../../interfaces/createDocument";
+
 export interface Coordinates {
-  x: number;
-  y: number;
+  field: Field;
+  recipient: Recipient;
 }
 
 export interface FileRendererProps {
   fileData: string;
-  handleChange: (data: Record<string, unknown>) => void;
 }
 
 export interface FileRendererChange {

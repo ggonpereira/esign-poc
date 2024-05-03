@@ -2,34 +2,36 @@ import { useEffect } from "react";
 
 interface SigningComponentProps {
   embeddedSigningUrl: string;
+  onClose: () => void;
 }
 
-const SigningComponent = ({ embeddedSigningUrl }: SigningComponentProps) => {
+const SigningComponent = ({
+  embeddedSigningUrl,
+  onClose,
+}: SigningComponentProps) => {
   useEffect(() => {
-    // Initialize SignWellEmbed object
     const signWellEmbed = new (window as any).SignWellEmbed({
       url: embeddedSigningUrl,
       events: {
         completed: (e: any) => {
+          onClose();
           console.log("completed event: ", e);
         },
         closed: (e: any) => {
+          onClose();
           console.log("closed event: ", e);
         },
       },
     });
 
-    // Open the SignWell iFrame
     signWellEmbed.open();
 
-    // Clean up function
     return () => {
-      // Close the SignWell iFrame when the component unmounts
       signWellEmbed.close();
     };
-  }, [embeddedSigningUrl]);
+  }, [embeddedSigningUrl, onClose]);
 
-  return <div>{/* Render any additional content if needed */}</div>;
+  return null;
 };
 
 export default SigningComponent;

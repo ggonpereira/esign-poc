@@ -1,84 +1,77 @@
-import { useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
+import { CreateDocumentForm } from "../../interfaces/createDocument";
 import { InputGroup } from "../InputGroup";
+import { TrashIcon } from "./icons";
 
-interface RecipientProps {
-  handleChange: (data: Record<string, unknown>) => void;
-}
+const emailRegex = /^[\w-.+]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-export const Recipient = ({ handleChange }: RecipientProps) => {
-  const [recipients, setRecipients] = useState([
-    { id: "1", name: "", email: "" },
-  ]);
+export const Recipient = () => {
+  const {
+    control,
+    register,
+    formState: { errors },
+  } = useFormContext<CreateDocumentForm>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "recipients",
+    rules: {
+      minLength: 1,
+    },
+  });
 
   const addRecipient = () => {
-    const newRecipient = {
-      id: `${recipients.length + 1}`,
-      name: "",
-      email: "",
-    };
-    setRecipients([...recipients, newRecipient]);
-  };
-
-  const deleteLastRecipient = () => {
-    setRecipients((recipients) => recipients.slice(0, -1));
-  };
-
-  const handleRecipientChange = (id: string, field: string, value: string) => {
-    setRecipients((prevRecipients) =>
-      prevRecipients.map((recipient) =>
-        recipient.id === id ? { ...recipient, [field]: value } : recipient
-      )
-    );
-  };
-
-  const handleFinish = () => {
-    handleChange({
-      recipients,
-    });
+    append({ name: "", email: "", id: uuidv4() });
   };
 
   return (
     <div className="flex flex-col gap-3">
-      {recipients.map((recipient) => (
-        <div key={recipient.id} className="flex flex-col gap-2">
-          <InputGroup
-            label={`Recipient ${recipient.id} name`}
-            value={recipient.name}
-            onChange={(e) => handleRecipientChange(recipient.id, "name", e)}
-          />
+      {fields.map((recipient, index) => (
+        <div key={recipient.id} className="flex gap-2">
+          <div className="flex gap-8">
+            <div className="flex flex-col gap-1">
+              <InputGroup
+                label={`Name of Signer`}
+                errorMessage={errors?.recipients?.[index]?.name}
+                {...register(`recipients.${index}.name`, {
+                  required: "You must insert a name for the signer",
+                })}
+              />
+            </div>
 
-          <InputGroup
-            label={`Recipient ${recipient.id} email`}
-            value={recipient.email}
-            onChange={(e) => handleRecipientChange(recipient.id, "email", e)}
-          />
+            <div className="flex flex-col gap-1">
+              <InputGroup
+                label={`Email`}
+                errorMessage={errors?.recipients?.[index]?.email}
+                {...register(`recipients.${index}.email`, {
+                  required: "You must insert an email for the signer",
+                  pattern: {
+                    value: emailRegex,
+                    message: "Should be a valid email",
+                  },
+                })}
+              >
+                {index > 0 && (
+                  <button
+                    onClick={() => remove(index)}
+                    className="flex h-fit self-end text-blue-500 p-2 justify-center rounded-md"
+                  >
+                    <TrashIcon />
+                  </button>
+                )}
+              </InputGroup>
+            </div>
+          </div>
         </div>
       ))}
 
-      <div className="flex flex-col gap-2">
-        <button
-          onClick={addRecipient}
-          className="flex p-2 w-100 justify-center bg-gray-300 rounded-md"
-        >
-          Add More Recipient
-        </button>
-
-        {recipients.length > 1 && (
-          <button
-            onClick={deleteLastRecipient}
-            className="flex p-2 justify-center bg-gray-300 rounded-md"
-          >
-            Delete Last Recipient
-          </button>
-        )}
-
-        <button
-          onClick={handleFinish}
-          className="flex p-2 w-100 justify-center bg-green-300 rounded-md"
-        >
-          Done adding recipients
-        </button>
-      </div>
+      <button
+        onClick={addRecipient}
+        type="button"
+        className="text-blue-500 w-fit mt-5"
+      >
+        + Add Another Signer
+      </button>
     </div>
   );
 };

@@ -1,17 +1,14 @@
-export interface CreateDocument {
+export interface CreateDocumentForm {
   name: string;
-  subject: string;
-  message: string;
   recipients: Recipient[];
   files: File[];
-  fields: Array<Field[]>;
+  fields: Field[];
 }
 
 export interface Field {
   type: string;
-  required: boolean;
-  fixed_width: boolean;
-  lock_sign_date: boolean;
+  fixed_width?: boolean;
+  lock_sign_date?: boolean;
   x: number;
   y: number;
   page: number;
@@ -24,8 +21,7 @@ export interface File {
 }
 
 export interface Recipient {
-  send_email: boolean;
-  send_email_delay: number;
+  send_email?: boolean;
   id: string;
   name: string;
   email: string;

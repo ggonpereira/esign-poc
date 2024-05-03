@@ -1,10 +1,8 @@
 export interface CreateDocument {
   files: File[];
   name: string;
-  subject: string;
-  message: string;
   recipients: Recipient[];
-  fields: Array<Field[]>;
+  fields: Field[];
 }
 
 export interface Field {
@@ -33,8 +31,6 @@ export interface Recipient {
 
 export interface CreateDocumentPayload {
   name: string;
-  subject: string;
-  message: string;
   recipients: Recipient[];
   fields: Field[];
   files: File[];

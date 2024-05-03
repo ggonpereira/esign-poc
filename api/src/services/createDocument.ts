@@ -1,3 +1,4 @@
+import { CreateDocumentResponse } from "../types/createDocumentResponse";
 import { CreateDocumentPayload } from "../types/document";
 import { signWellApi } from "../utils/signWellApi";
 
@@ -19,11 +20,14 @@ export const createDocumentWithSignwell = async (
   };
 
   try {
-    const { data } = await signWellApi.post("/documents", payload);
+    const { data } = await signWellApi.post<CreateDocumentResponse>(
+      "/documents",
+      payload
+    );
 
     return {
       success: true,
-      embeddedUrl: data.recipients[0].embedded_signing_url,
+      data,
     };
   } catch (error) {
     return { success: false, error: error.data };
