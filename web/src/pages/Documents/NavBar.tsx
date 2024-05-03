@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useUserContext } from "../../contexts/UserContextProvider/hooks";
-import { Logo } from "../icons";
 
 export const NavBar = () => {
   const { user, usersList, toggleUser } = useUserContext();
@@ -8,8 +7,6 @@ export const NavBar = () => {
 
   return (
     <div className="h-full w-80 bg-purple-900 p-6 flex flex-col gap-4">
-      <Logo />
-
       <div className="flex flex-col">
         <span className="text-yellow-500 text-lg">{usersList[0].name}</span>
         <span className="text-yellow-500 text-lg">{usersList[1].name}</span>
